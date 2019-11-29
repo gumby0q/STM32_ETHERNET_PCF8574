@@ -137,16 +137,21 @@ void init() {
 //    UART_Printf("\r\ninit() called!\r\n");
 //
 //    UART_Printf("Registering W5500 callbacks...\r\n");
-    HAL_GPIO_WritePin(W5500_CS_GPIO_Port, W5500_CS_Pin, GPIO_PIN_SET);
+//    HAL_GPIO_WritePin(W5500_CS_GPIO_Port, W5500_CS_Pin, GPIO_PIN_SET);
 
 
     reg_wizchip_cs_cbfunc(W5500_Select, W5500_Unselect);
     reg_wizchip_spi_cbfunc(W5500_ReadByte, W5500_WriteByte);
     reg_wizchip_spiburst_cbfunc(W5500_ReadBuff, W5500_WriteBuff);
 
+
+
 //    UART_Printf("Calling wizchip_init()...\r\n");
     uint8_t rx_tx_buff_sizes[] = {2, 2, 2, 2, 2, 2, 2, 2};
     wizchip_init(rx_tx_buff_sizes, rx_tx_buff_sizes);
+
+
+
 
 //    UART_Printf("Calling DHCP_init()...\r\n");
     wiz_NetInfo net_info = {
@@ -156,15 +161,52 @@ void init() {
 		.sn = {255,255,255,0}
     };
     // set MAC address before using DHCP
-    setSHAR(net_info.mac);
+//    setSHAR(net_info.mac);
+
+
+    uint8_t memsize[2][8] = {{2,2,2,2,2,2,2,2},{2,2,2,2,2,2,2,2}};
+    uint8_t tmp;
+
+	/* WIZCHIP SOCKET Buffer initialize */
+	if(ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1){
+
+
+
+		//init fail
+		printf("WIZCHIP Initialized fail.\r\n");
+		while(1);
+	}
+	do{
+		if(ctlwizchip(CW_GET_PHYLINK, (void*)&tmp) == -1)
+			printf("Unknown PHY Link stauts.\r\n");
+		  HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
+		  HAL_Delay(200);
+		  HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
+		  HAL_Delay(200);
+		  HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
+
+	}while(tmp == PHY_LINK_OFF);
+
+	uint8_t macAddr[6] = {0x00, 0x08, 0xdc, 0x00, 0xab, 0x05};
+	uint8_t ipAddr[4] = {192,168,0,5};
+	uint8_t subNet[4] = {255,255,255,0};
+	uint8_t gateWay[4] = {192, 168, 0, 1};
+
+
+	setSHAR(macAddr);			//set MAC addr
+	setSIPR(ipAddr);			//set IP addr
+	setGAR(gateWay);			//set gate way
+	setSUBR(subNet);			//set subnet
 //    DHCP_init(DHCP_SOCKET, dhcp_buffer);
 
 //    UART_Printf("Registering DHCP callbacks...\r\n");
-    reg_dhcp_cbfunc(
-        Callback_IPAssigned,
-        Callback_IPAssigned,
-        Callback_IPConflict
-    );
+//    reg_dhcp_cbfunc(
+//        Callback_IPAssigned,
+//        Callback_IPAssigned,
+//        Callback_IPConflict
+//    );
+
+
 
 //    UART_Printf("Calling DHCP_run()...\r\n");
     // actually should be called in a loop, e.g. by timer
@@ -193,7 +235,7 @@ void init() {
 //    );
 
 //    UART_Printf("Calling wizchip_setnetinfo()...\r\n");
-    wizchip_setnetinfo(&net_info);
+//    wizchip_setnetinfo(&net_info);
 
 //    UART_Printf("Calling DNS_init()...\r\n");
 //    DNS_init(DNS_SOCKET, dns_buffer);
@@ -211,12 +253,14 @@ void init() {
 //    }
 
 //    UART_Printf("Creating socket...\r\n");
-    uint8_t http_socket = HTTP_SOCKET;
-    uint8_t code = socket(http_socket, Sn_MR_TCP, 10888, 0);
-    if(code != http_socket) {
-        UART_Printf("socket() failed, code = %d\r\n", code);
-        return;
-    }
+//    uint8_t http_socket = HTTP_SOCKET;
+//    uint8_t code = socket(http_socket, Sn_MR_TCP, 10888, 0);
+//    if(code != http_socket) {
+//        UART_Printf("socket() failed, code = %d\r\n", code);
+//        return;
+//    }
+
+
 
 //    UART_Printf("Socket created, connecting...\r\n");
 //    code = connect(http_socket, addr, 80);
@@ -306,23 +350,18 @@ int main(void)
 
   MX_GPIO_Init();
 
-  HAL_GPIO_WritePin(ULED_GPIO_Port, ULED_Pin, GPIO_PIN_SET);
-  HAL_Delay(1000);
-  HAL_GPIO_WritePin(ULED_GPIO_Port, ULED_Pin, GPIO_PIN_RESET);
-  HAL_Delay(1000);
-  HAL_GPIO_WritePin(ULED_GPIO_Port, ULED_Pin, GPIO_PIN_SET);
+//  HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
+//  HAL_Delay(1000);
+//  HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
+//  HAL_Delay(1000);
+//  HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
 
-//  MX_I2C1_Init();
-//  MX_SPI1_Init();
-//  MX_USART1_UART_Init();
+  MX_I2C1_Init();
+  MX_SPI1_Init();
+  MX_USART1_UART_Init();
 
 
   /* USER CODE BEGIN 2 */
-  HAL_GPIO_TogglePin(ULED_GPIO_Port, ULED_Pin);
-  HAL_Delay(1000);
-  HAL_GPIO_TogglePin(ULED_GPIO_Port, ULED_Pin);
-  HAL_Delay(1000);
-  HAL_GPIO_TogglePin(ULED_GPIO_Port, ULED_Pin);
   init();
 
   /* USER CODE END 2 */
@@ -332,7 +371,7 @@ int main(void)
   while (1)
   {
 	loop();
-    HAL_GPIO_TogglePin(ULED_GPIO_Port, ULED_Pin);
+	  HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
 
 
 
