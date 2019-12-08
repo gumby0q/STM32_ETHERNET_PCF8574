@@ -33,6 +33,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -64,6 +65,10 @@ void Error_Handler(void);
 #define SPI1_CS0_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
+#define W5500_CS_Pin SPI1_CS0_Pin
+#define W5500_CS_GPIO_Port SPI1_CS0_GPIO_Port
+//#define ULED_Pin GPIO_PIN_2
+//#define ULED_GPIO_Port GPIOD
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
