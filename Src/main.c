@@ -80,13 +80,13 @@ static void MX_SPI1_Init(void);
 
 #define PCF857x_ADDRESS1 0x20
 #define PCF857x_ADDRESS2 0x22
-#define PCF857x_ADDRESS3 0x20
+#define PCF857x_ADDRESS3 0x27
 
 #define PCF857x_I2C_ADDR1        PCF857x_ADDRESS1<<1 // 0x38<<1 = 0x70
 #define PCF857x_I2C_ADDR2        PCF857x_ADDRESS2<<1 // 0x38<<1 = 0x70
 #define PCF857x_I2C_ADDR3        PCF857x_ADDRESS3<<1 // 0x38<<1 = 0x70
 
-#define DATA_BUF_SIZE   100
+#define DATA_BUF_SIZE   200
 
 uint8_t gDATABUF[DATA_BUF_SIZE];
 uint8_t gateWay[4] = {192, 168, 1, 1};
@@ -100,8 +100,31 @@ uint8_t  expander_state_buffer[2]  = {0x0,0x0};
 #define json_answer	"HTTP/1.0 200 OK\r\n"\
 		"Content-Type: application/json\r\n"\
 		"Access-Control-Allow-Origin: *\r\n"\
-						"\r\n"\
-						"{\"success\": %d }\n"
+		"\r\n"\
+
+
+
+#define BYTE_TO_BINARY_PATTERN "%c,%c,%c,%c,%c,%c,%c,%c"
+
+#define BYTE_TO_BINARY(byte)  \
+  (byte & 0x01 ? '1' : '0'), \
+  (byte & 0x04 ? '1' : '0'), \
+  (byte & 0x02 ? '1' : '0'), \
+  (byte & 0x08 ? '1' : '0'), \
+  (byte & 0x10 ? '1' : '0'), \
+  (byte & 0x20 ? '1' : '0'), \
+  (byte & 0x40 ? '1' : '0'), \
+  (byte & 0x80 ? '1' : '0')
+
+
+//(byte & 0x80 ? '1' : '0'),
+//(byte & 0x40 ? '1' : '0'),
+//(byte & 0x20 ? '1' : '0'),
+//(byte & 0x10 ? '1' : '0'),
+//(byte & 0x08 ? '1' : '0'),
+//(byte & 0x04 ? '1' : '0'),
+//(byte & 0x02 ? '1' : '0'),
+//(byte & 0x01 ? '1' : '0')
 
 
 //void UART_Printf(const char* fmt, ...) {
@@ -176,10 +199,10 @@ void init() {
 			//printf("Unknown PHY Link stauts.\r\n");
 	}while(tmp == PHY_LINK_OFF);
 
-	wiz_NetInfo net_info = { .mac = {0x00, 0x08, 0xdc, 0xab, 0xcd, 0xef},
+	wiz_NetInfo net_info = {    .mac = {0x00, 0x08, 0xdc, 0xab, 0xcd, 0xef},
 	                            .ip = {192, 168, 1, 154},
 	                            .sn = {255, 255, 254, 0},
-	                            .gw = gateWay,
+	                            .gw = {192, 168, 1, 1},
 	                            .dns = {0, 0, 0, 0},
 	                            .dhcp = NETINFO_DHCP };
 
@@ -188,6 +211,7 @@ void init() {
 	setGAR(net_info.gw);			//set gate way
 	setSUBR(net_info.sn);			//set subnet
 ///////////////////////////////////////////
+
 	return;
 //    DHCP_init(DHCP_SOCKET, dhcp_buffer);
 //    reg_dhcp_cbfunc(
@@ -222,6 +246,10 @@ void write_global_state(){
 	HAL_I2C_Master_Transmit(&hi2c1, PCF857x_I2C_ADDR3, expander_state_buffer, 2, 50);
 }
 
+inline size_t u_strlen(unsigned char * array)
+{
+    return strlen((const char*)array);
+}
 
 int32_t loopback_tcps_g(uint8_t sn, uint8_t* buf, uint16_t port){
 	int32_t ret;
@@ -274,7 +302,7 @@ int32_t loopback_tcps_g(uint8_t sn, uint8_t* buf, uint16_t port){
 						if(temp_addr){
 							HAL_I2C_Master_Transmit(&hi2c1, temp_addr, expander_state_buffer, 2, 50);
 						}
-						sprintf(buf, json_answer,1);
+//						sprintf(buf, json_answer,1);
 					}
 					else if(memcmp(url, "/toggle", 7)==0){
 						pin = 0;
@@ -283,7 +311,7 @@ int32_t loopback_tcps_g(uint8_t sn, uint8_t* buf, uint16_t port){
 						expander2_state = global_state;
 						expander3_state = global_state;
 						write_global_state();
-						sprintf(buf, json_answer,2);
+						sprintf(buf, json_answer);
 					}else if(memcmp(url, "/off/", 5)==0){
 						pin = atoi(url+5);
 						temp_addr = 0;
@@ -309,14 +337,14 @@ int32_t loopback_tcps_g(uint8_t sn, uint8_t* buf, uint16_t port){
 						if(temp_addr){
 							HAL_I2C_Master_Transmit(&hi2c1, temp_addr, expander_state_buffer, 2, 50);
 						}
-						sprintf(buf, json_answer,6);
+//						sprintf(buf, json_answer,6);
 					}else if(memcmp(url, "/off", 4)==0){
 						global_state = 0;
 						expander1_state = global_state;
 						expander2_state = global_state;
 						expander3_state = global_state;
 						write_global_state();
-						sprintf(buf, json_answer,4);
+//						sprintf(buf, json_answer,4);
 					}else if(memcmp(url, "/on/", 4)==0){
 						pin = atoi(url+4);
 
@@ -340,7 +368,7 @@ int32_t loopback_tcps_g(uint8_t sn, uint8_t* buf, uint16_t port){
 							expander_state_buffer[1] = (uint8_t)(expander3_state>>8);
 						}
 						HAL_I2C_Master_Transmit(&hi2c1, temp_addr, expander_state_buffer, 2, 50);
-						sprintf(buf, json_answer,5);
+//						sprintf(buf, json_answer,5);
 					}else if(memcmp(url, "/on", 3)==0){
 						global_state = 0xffff;
 						expander1_state = global_state;
@@ -348,14 +376,30 @@ int32_t loopback_tcps_g(uint8_t sn, uint8_t* buf, uint16_t port){
 						expander3_state = global_state;
 
 						write_global_state();
-						sprintf(buf, json_answer,3);
+//						sprintf(buf, json_answer,3);
 
 
 					}else{
 						pin = 200;
-						sprintf(buf, json_answer,7);
 					}
-					size=strlen(buf);
+
+
+
+					sprintf(buf, json_answer,1);
+
+					sprintf(buf + strlen(buf), "[");
+					sprintf(buf + strlen(buf), BYTE_TO_BINARY_PATTERN , BYTE_TO_BINARY(expander1_state));
+					sprintf(buf + strlen(buf), ",");
+					sprintf(buf + strlen(buf), BYTE_TO_BINARY_PATTERN , BYTE_TO_BINARY(expander1_state>>8));
+					sprintf(buf + strlen(buf), ",");
+					sprintf(buf + strlen(buf), BYTE_TO_BINARY_PATTERN , BYTE_TO_BINARY(expander2_state));
+					sprintf(buf + strlen(buf), ",");
+					sprintf(buf + strlen(buf), BYTE_TO_BINARY_PATTERN , BYTE_TO_BINARY(expander2_state>>8));
+					sprintf(buf + strlen(buf), ",");
+					sprintf(buf + strlen(buf), BYTE_TO_BINARY_PATTERN , BYTE_TO_BINARY(expander3_state));
+					sprintf(buf + strlen(buf), "]");
+
+					size=strlen((const char*)buf);
 
 					//sending answer
 					while(size != sentsize){
@@ -437,6 +481,9 @@ int main(void)
 
 
   /* USER CODE BEGIN 2 */
+  HAL_I2C_Master_Transmit(&hi2c1, PCF857x_I2C_ADDR1, expander_state_buffer, 2, 50);
+  HAL_I2C_Master_Transmit(&hi2c1, PCF857x_I2C_ADDR2, expander_state_buffer, 2, 50);
+  HAL_I2C_Master_Transmit(&hi2c1, PCF857x_I2C_ADDR3, expander_state_buffer, 2, 50);
   init();
 
   /* USER CODE END 2 */
@@ -444,9 +491,6 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  HAL_I2C_Master_Transmit(&hi2c1, PCF857x_I2C_ADDR1, expander_state_buffer, 2, 50);
-  HAL_I2C_Master_Transmit(&hi2c1, PCF857x_I2C_ADDR2, expander_state_buffer, 2, 50);
-  HAL_I2C_Master_Transmit(&hi2c1, PCF857x_I2C_ADDR3	, expander_state_buffer, 2, 50);
 
   while (1)
   {
@@ -659,8 +703,8 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : SPI1_CS0_Pin */
   GPIO_InitStruct.Pin = SPI1_CS0_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
-//  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+//  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(SPI1_CS0_GPIO_Port, &GPIO_InitStruct);
