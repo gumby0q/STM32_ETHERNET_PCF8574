@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html manifest="ui.appcache">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="jquery.min.js"></script>
+    <script src="vue.js"></script>
+    <style>
+        .on {
+            background-color: aquamarine;
+        }
+
+        .light-element {
+            width: 28px;
+            height: 28px;
+            border: 1px solid #acd4ba;
+            border-radius: 8px;
+        }
+
+        table td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <table border="0" width="100%">
+        <tr>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">0</light>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">1</light>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">2</light>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">3</light>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">4</light>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">5</light>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">6</light>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">7</light>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">37</light>
+            </td>
+            <td colspan="6"></td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">8</light>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">36</light>
+            </td>
+            <td colspan="6">
+                <button class="light-element" v-on:click="toggle()">t</button>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">9</light>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">35</light>
+            </td>
+            <td colspan="6">
+                <button class="light-element" v-on:click="on()">On</button>
+                <button class="light-element" v-on:click="off()">off</button>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">10</light>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">34</light>
+            </td>
+            <td colspan="6"></td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">11</light>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">33</light>
+            </td>
+            <td colspan="6"></td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">12</light>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">32</light>
+            </td>
+            <td colspan="6"></td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">13</light>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">31</light>
+            </td>
+            <td colspan="6">
+                <button class="light-element" v-on:click="snake('off',lastPin)">off s</button>
+                <button class="light-element" v-on:click="snake('on',lastPin)">on s</button>
+
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">14</light>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">30</light>
+            </td>
+            <td colspan="6"></td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">15</light>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">29</light>
+            </td>
+            <td colspan="6"></td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">16</light>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">28</light>
+            </td>
+            <td colspan="6"></td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">17</light>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">27</light>
+            </td>
+            <td colspan="6"></td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">18</light>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">26</light>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">25</light>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">24</light>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">23</light>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">22</light>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">21</light>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">20</light>
+            </td>
+            <td>
+                <light v-bind:state="state" type="toggle" v-on:toggle="toggle">19</light>
+            </td>
+        </tr>
+    </table>
+</div>
+<script>
+    Vue.component('light', {
+        props: ['type', 'state'],
+        data: function() {
+            return {
+            }
+        },
+        computed: {
+            number: {
+                get: function() {
+                    return this.$slots.default[0].text;
+                }
+            }
+        },
+        methods: {
+            send: function() {
+                this.$emit(this.type, this.number);
+            }
+        },
+        template: '<button v-on:click="send" class="light-element" v-bind:class="{ on: state[number] }"  >{{number}}</button>'
+    });
+
+    var app = new Vue({
+        el: '#app',
+        data: function() {
+            return {
+                inProgress: null,
+                lastPin: null,
+                stuck: [],
+                state: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            }
+        },
+        methods: {
+            toggle(pin) {
+                if (pin || pin === 0) {
+                    this.send("/toggle/" + pin);
+                    this.lastPin = pin;
+                } else {
+                    this.send("/toggle");
+                }
+            },
+            on(pin) {
+                if (pin || pin === 0) {
+                    this.send("/on/" + pin);
+                    this.lastPin = pin;
+                } else {
+                    this.send("/on");
+                }
+            },
+            snake(type, pin) {
+                console.log(type, pin);
+                var left = pin;
+                var right = pin;
+                this.stuck.push('/' + type + '/' + pin);
+                for (var i = 0; i <= (this.state.length / 2) - 2; i++) {
+                    left--;
+                    right++;
+                    if (left < 0) {
+                        left = 37;
+                    }
+                    if (right > 37) {
+                        right = 0;
+                    }
+                    this.stuck.push('/' + type + '/' + right);
+                    this.stuck.push('/' + type + '/' + left);
+
+                }
+
+                this.run();
+            },
+            off(pin) {
+                if (pin || pin === 0) {
+                    this.send("/off/" + pin);
+                    this.lastPin = pin;
+                } else {
+                    this.send("/off");
+                }
+            },
+            send(url) {
+                this.stuck.push(url);
+                this.run();
+            },
+            run() {
+                var t = this;
+                if (!this.inProgress) {
+                    this.inProgress = setInterval(function() {
+                        var url = t.stuck.shift();
+                        if (url) {
+                            $.ajax({
+                                url: "http://192.168.1.154" + url,
+                                success: function(resuult) {
+                                    t.state = resuult;
+                                    console.log(url);
+                                }
+                            });
+                        } else {
+                            clearInterval(t.inProgress);
+                            t.inProgress = null;
+                        }
+                    }, 100);
+                }
+            },
+        },
+        mounted() {
+                this.send('/state');
+        }
+    })
+</script>
+</body>
+</html>
