@@ -108,8 +108,8 @@ uint8_t  expander_state_buffer[2]  = {0x0,0x0};
 
 #define BYTE_TO_BINARY(byte)  \
   (byte & 0x01 ? '1' : '0'), \
-  (byte & 0x04 ? '1' : '0'), \
   (byte & 0x02 ? '1' : '0'), \
+  (byte & 0x04 ? '1' : '0'), \
   (byte & 0x08 ? '1' : '0'), \
   (byte & 0x10 ? '1' : '0'), \
   (byte & 0x20 ? '1' : '0'), \
@@ -294,8 +294,8 @@ int32_t loopback_tcps_g(uint8_t sn, uint8_t* buf, uint16_t port){
 							temp_pin = pin-32;
 							temp_addr = PCF857x_I2C_ADDR3;
 							expander3_state ^= 1UL << temp_pin;
-							expander_state_buffer[0] = (uint8_t)expander3_state;
-							expander_state_buffer[1] = (uint8_t)(expander3_state>>8);
+							expander_state_buffer[0] = (uint8_t)expander3_state;//todo
+							expander_state_buffer[1] = (uint8_t)expander3_state;
 						}else{
 
 						}
@@ -332,7 +332,7 @@ int32_t loopback_tcps_g(uint8_t sn, uint8_t* buf, uint16_t port){
 							temp_addr = PCF857x_I2C_ADDR3;
 							expander3_state &= ~(1UL << temp_pin);
 							expander_state_buffer[0] = (uint8_t)expander3_state;
-							expander_state_buffer[1] = (uint8_t)(expander3_state>>8);
+							expander_state_buffer[1] = (uint8_t)expander3_state;
 						}
 						if(temp_addr){
 							HAL_I2C_Master_Transmit(&hi2c1, temp_addr, expander_state_buffer, 2, 50);
@@ -365,7 +365,7 @@ int32_t loopback_tcps_g(uint8_t sn, uint8_t* buf, uint16_t port){
 							temp_addr = PCF857x_I2C_ADDR3;
 							expander3_state |= 1UL << temp_pin;
 							expander_state_buffer[0] = (uint8_t)expander3_state;
-							expander_state_buffer[1] = (uint8_t)(expander3_state>>8);
+							expander_state_buffer[1] = (uint8_t)expander3_state;
 						}
 						HAL_I2C_Master_Transmit(&hi2c1, temp_addr, expander_state_buffer, 2, 50);
 //						sprintf(buf, json_answer,5);
